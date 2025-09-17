@@ -1,0 +1,10 @@
+*.exe
+*.dll
+
+*.test
+*.out
+
+*.log
+.vscode/
+pybenc/
+
