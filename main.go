@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -20,6 +19,14 @@ func main() {
 		fmt.Println("Error reading torrent file:", err)
 		return
 	}
-	pretty, _ := json.MarshalIndent(torrent, "", "  ")
-	fmt.Println(string(pretty))
+	_, err = torrent.GetTrackerResponse([20]byte{ // just a random peer ID for now
+		'O', 'M', 'A', 'R', 'G', 'A', 'M', 'A', 'L', '1',
+		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	}, 6881)
+	if err != nil {
+		fmt.Println("Error getting tracker response:", err)
+		return
+	}
 }
+
+// we have the peers, now the handshake so we start accepting and sending messages

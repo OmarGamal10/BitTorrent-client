@@ -16,8 +16,8 @@ type TorrentFile struct {
 	Name        string
 	Length      int
 	PieceLength int
-	PieceHashes [][20]byte // SHA-1 hash is 20 bytes
 	InfoHash    [20]byte   // SHA-1 hash of `info`, the fingerprint of the file to the tracker
+	PieceHashes [][20]byte // SHA-1 hash is 20 bytes
 }
 
 // serialization structs
@@ -58,8 +58,8 @@ func (i info) pieceHashes() ([][20]byte, error) {
 	return pieceHashes, nil
 }
 
+// Takes an io.Reader, returns a TorrentFile struct
 func ReadTorrent(r io.Reader) (*TorrentFile, error) {
-
 	bt := bencodeTorrent{}
 	err := bencode.Unmarshal(r, &bt)
 	if err != nil {
@@ -73,6 +73,7 @@ func ReadTorrent(r io.Reader) (*TorrentFile, error) {
 	return torrentFile, nil
 }
 
+// Takes a path to a torrent file, returns a TorrentFile struct
 func LoadTorrent(path string) (*TorrentFile, error) {
 	r, err := os.Open(path)
 	if err != nil {
