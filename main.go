@@ -48,18 +48,19 @@ func main() {
 		return
 	}
 	fmt.Println("Handshake sent to", peers[0].IP.String()+":"+strconv.Itoa(int(peers[0].Port)))
-	resp, err := conn.Read(make([]byte, 68))
+	respBuf := make([]byte, 68)
+	_, err = conn.Read(respBuf)
 	if err != nil {
 		fmt.Println("Error reading handshake response:", err)
 		return
 	}
-	handshakeResp, err := handshake.Deserialize(make([]byte, resp))
+	handshakeResp, err := handshake.Deserialize(respBuf)
 	if err != nil {
 		fmt.Println("Error deserializing handshake response:", err)
 		return
 	}
 	fmt.Printf("Received handshake response: %+v\n", handshakeResp)
+	// check if the peerId is the same one sent by client
 }
 
-// we have the peers, now the handshake so we start accepting and sending messages
-// make a handshake struct with its serialize and deserialize methods, it should not handle the connection
+// we have the handshake we should expect messages now
