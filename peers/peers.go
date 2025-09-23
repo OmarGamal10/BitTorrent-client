@@ -16,6 +16,7 @@ func (p Peer) socketAddress() string {
 	return net.JoinHostPort(p.IP.String(), strconv.Itoa(int(p.Port)))
 }
 
+// Takes in the compact peer list (string encoded) and returns a list of peers
 func UnMarshal(peerBuf []byte) ([]Peer, error) {
 	if len(peerBuf)%6 != 0 {
 		return nil, fmt.Errorf("corrupted peer list")

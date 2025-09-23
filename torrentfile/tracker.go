@@ -14,9 +14,10 @@ import (
 // for now I will focus on http trackers
 type TrackerResponse struct {
 	Interval int    `bencode:"interval"` //interval in seconds to wait before re-requesting
-	Peers    string `bencode:"peers"`    //encoded as a list of 6 byte strings, 4 bytes IP, 2 bytes port Big Endian
+	Peers    string `bencode:"peers"`    //encoded as a string of 6 byte strings, 4 bytes IP, 2 bytes port Big Endian
 }
 
+// Contacts the tracker and returns a list of peers
 func (t TorrentFile) GetTrackerResponse(peerID [20]byte, port uint16) ([]peers.Peer, error) {
 	baseUrl, err := url.Parse(t.Announce)
 	if err != nil {
