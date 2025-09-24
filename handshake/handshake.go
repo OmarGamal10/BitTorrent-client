@@ -44,3 +44,10 @@ func Deserialize(buf []byte) (*handshake, error) {
 	copy(peerId[:], buf[1+19+8+20:])
 	return New(infoHash, peerId), nil
 }
+
+func (h handshake) Validate(infoHash [20]byte) error {
+	if h.infoHash != infoHash {
+		return errors.New("infohash does not match")
+	}
+	return nil
+}

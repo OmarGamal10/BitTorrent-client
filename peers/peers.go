@@ -30,7 +30,7 @@ func UnMarshal(peerBuf []byte) ([]Peer, error) {
 			IP:   ip,
 			Port: port,
 		}
-		fmt.Println(peers[i].socketAddress())
+		// fmt.Println(peers[i].socketAddress())
 	}
 	return peers, nil
 }
