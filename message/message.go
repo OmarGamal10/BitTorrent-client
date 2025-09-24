@@ -1,6 +1,10 @@
 package message
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+	"errors"
+	"io"
+)
 
 type messageId int
 
@@ -59,10 +63,26 @@ func (m *Message) Serialize() []byte {
 	return buf
 }
 
+func Deserialize(conn io.Reader) (*Message, error) {
+	var length uint32
+	err := binary.Read(conn, binary.BigEndian, length)
+	if err != nil {
+		return nil, errors.New("Could not read mesage length")
+		// will probably cut the connection or something then
+	}
+
+	buf := make([]byte, length)
+	io.ReadFull(conn, buf)
+	return &Message{
+		Id:      messageId(buf[0]),
+		Payload: buf[1:],
+	}, nil
+}
+
 func populateCancelAndRequest(m *Message, idx int, begin int, length int) {
 	buf := make([]byte, 12)
 	binary.BigEndian.PutUint32(buf[0:4], uint32(idx))
 	binary.BigEndian.PutUint32(buf[4:8], uint32(begin))
-	binary.BigEndian.PutUint32(buf[8:12], uint32(idx))
+	binary.BigEndian.PutUint32(buf[8:12], uint32(length))
 	m.Payload = buf
 }

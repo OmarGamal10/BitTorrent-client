@@ -2,7 +2,7 @@ package handshake
 
 import (
 	"errors"
-	"fmt"
+	"io"
 )
 
 // 8 reserved btyes after pstrlen
@@ -28,16 +28,23 @@ func (h handshake) Serialize() []byte {
 	return buf
 }
 
-func Deserialize(buf []byte) (*handshake, error) {
-	pstrl := int(buf[0])
-	if pstrl != len("BitTorrent protocol") {
-		fmt.Println("pstr is ", pstrl)
+// handshakes are of fixed length, could've passed a buffer directly but for consistency
+func Deserialize(conn io.Reader) (*handshake, error) {
+	buf := make([]byte, 1+19+8+20+20)
+	_, err := io.ReadFull(conn, buf)
+	if err != nil {
+		return nil, errors.New("Couldn't read handshake off open tcp connection")
+	}
+	pstrlen := int(buf[0])
+	if int(buf[0]) != len("BitTorrent protocol") {
 		return nil, errors.New("invalid pstr length")
 	}
-	pstr := string(buf[1 : 1+pstrl])
+
+	pstr := string(buf[1 : 1+pstrlen])
 	if pstr != "BitTorrent protocol" {
 		return nil, errors.New("invalid pstr")
 	}
+
 	var infoHash [20]byte
 	var peerId [20]byte
 	copy(infoHash[:], buf[1+19+8:])
