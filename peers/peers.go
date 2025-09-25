@@ -12,7 +12,7 @@ type Peer struct {
 }
 
 // just for formatting
-func (p Peer) socketAddress() string {
+func (p Peer) SocketAddress() string {
 	return net.JoinHostPort(p.IP.String(), strconv.Itoa(int(p.Port)))
 }
 

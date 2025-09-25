@@ -3,6 +3,7 @@ package message
 import (
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 )
 
@@ -65,16 +66,17 @@ func (m *Message) Serialize() []byte {
 
 func Deserialize(conn io.Reader) (*Message, error) {
 	var length uint32
-	err := binary.Read(conn, binary.BigEndian, length)
+	err := binary.Read(conn, binary.BigEndian, &length)
 	if err != nil {
-		return nil, errors.New("Could not read mesage length")
+		fmt.Println(err)
+		return nil, errors.New("Could not read message length")
 		// will probably cut the connection or something then
 	}
-
 	buf := make([]byte, length)
 	io.ReadFull(conn, buf)
+	fmt.Printf("message is: %v\n", buf)
 	return &Message{
-		Id:      messageId(buf[0]),
+		Id:      messageId(buf[0]), // already read the length prefix
 		Payload: buf[1:],
 	}, nil
 }
